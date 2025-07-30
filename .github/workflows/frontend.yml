@@ -1,0 +1,51 @@
+name: React Frontend CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Jest (if not already installed)
+        run: npm install --save-dev jest
+
+      - name: Run tests (pass even if no tests exist)
+        env:
+          VITE_API_URL: https://book-hub-5-vjef.onrender.com
+        run: npm test -- --watchAll=false --passWithNoTests
+
+  build-and-deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: docker build --build-arg VITE_API_URL=https://book-hub-5-vjef.onrender.com -t react-frontend .
+
+      - name: Deploy to Render via REST API
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-d254hkm3jp1c73dv6e00d" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Accept: application/json"

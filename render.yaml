@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: react-frontend
+    env: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: book-fn/Dockerfile
+    buildCommand: docker build --build-arg VITE_API_URL=https://book-hub-5-vjef.onrender.com -t react-frontend .
+    startCommand: serve -s dist -l 3000
