@@ -60,7 +60,7 @@ const BookHubContent: React.FC = () => {
       ) : (
         <>
           <Hero />
-          <main className="container mx-auto px-4 py-8">
+          <main className="container mx-auto px-4 py-4">
             <div className="space-y-6">
               <BookFilters />
               <BookGrid onBookSelect={handleBookSelect} />
